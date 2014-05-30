@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+    <html>
+        <body>
+            <head>
+                 <script type="text/javascript" src="https://cdn.goinstant.net/v1/platform.min.js"></script>
+                 <script type="text/javascript" src="https://cdn.goinstant.net/integrations/gortc/latest/gortc.min.js"></script>
+            </head>
+            <body onload="onload();">
+                
+                
+            <div id="localVideoContainer"></div>
+            <div id="videoContainer"></div>
+            
+            
+            <script>
+                function onload() {
+  // Connect URL
+  var url = 'https://goinstant.net/64197338e27c/chat';
+
+  // Connect to GoInstant
+  goinstant.connect(url, function(err, platformObj, roomObj) {
+    if (err) {
+      throw err;
+    }
+
+    if (!goinstant.integrations.GoRTC.support) {
+      window.alert('Your browser does not support webrtc');
+      return;
+    }
+
+    var goRTC = new goinstant.integrations.GoRTC({
+      room: roomObj,
+      autoStart: true
+    });
+
+    goRTC.on('localStream', function() {
+      document.getElementById('localVideoContainer').appendChild(goRTC.localVideo);
+    });
+
+    goRTC.on('localStreamStopped', function() {
+      if (gortc.localVideo.parentNode) {
+        gortc.localVideo.parentNode.removeChild(goRTC.localVideo);
+      }
+    });
+
+    goRTC.on('peerStreamAdded', function(peer) {
+      document.getElementById('videoContainer').appendChild(peer.video);
+    });
+
+    goRTC.on('peerStreamRemoved', function(peer) {
+      if (peer.video.parentNode) {
+        peer.video.parentNode.removeChild(peer.video);
+      }
+    });
+  });
+}
+
+
+var options = {
+  room: exampleRoom,
+  autoStart: true,
+  video: false,
+  audio: true,
+  debug: true,
+  autoAdjustMic: true
+};
+
+var goRTC = new goinstant.integrations.GoRTC(options);
+
+
+goRTC.start(function(err) {
+  if (err) {
+    throw err;
+  }
+});
+
+goRTC.stop(function(err) {
+  if (err) {
+    throw err;
+  }
+});
+
+goRTC.pause();
+
+goRTC.resume();
+
+goRTC.mute();
+
+goRTC.unmute();
+ </script>
+</body>
+            
+</html>
